@@ -27,3 +27,17 @@ linlin <- function() {
     }
   )
 }
+
+quadquad <- function() {
+  list(
+    name = "QuadQuad",
+    cost = function(data, par, alpha) {
+      resids <- data$y - prediction(data, par)
+      sum(ifelse(resids > 0, alpha * resids^2, resids^2))
+    },
+    metric = function(preds, alpha) {
+      resids <- as.matrix(preds$y - preds[-c(1, 2)])
+      colMeans(ifelse(resids > 0, alpha * resids^2, resids^2))
+    }
+  )
+}
