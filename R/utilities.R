@@ -32,6 +32,6 @@ create_table <- function(data, cost_funs, alphas, metric) {
   output_table
 }
 
-plot_save <- function(filename) {
-  ggsave(filename, path = "figs", width = 7.2, height = 4.45, units = "in")
+plot_save <- function(filename, width = 7.2, height = 4.45) {
+  ggsave(filename, path = "figs", width = width, height = height, units = "in")
 }
