@@ -6,5 +6,5 @@ plot_models <- function(data, cost_funs, alpha) {
   ggplot() +
     geom_line(data = preds, aes(x, y)) + 
     geom_line(data = preds_m, aes(x = x, y = value, col = variable)) +
-    labs(title = paste("alpha =", alpha), col = "Method")
+    labs(title = paste("Dataset ", comment(data),", alpha = ", alpha, sep = ""), col = "Method")
 }
