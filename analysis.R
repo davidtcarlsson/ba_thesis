@@ -6,18 +6,24 @@ source("R/cost_functions.R")
 source("R/create_plots.R")
 
 set.seed(2022)
+theme_set(theme_classic(base_size = 14))
 
 # Lets create a two datasets
 # - df1: Random walk 
 # - df2: Linear with normal error
 sample_size <- 50
 df1 <- generate_rw(N = sample_size, x0 = 0, mu = 1, variance = 5)
+# Add a comment to the dataframe so that I can plot out its name
+comment(df1) <- "1"
+
 df2 <- generate_lin(N = sample_size, x0 = 0, mu = 0, variance = 5)
+comment(df2) <- "2"
 
 ggplot() +
   geom_line(data = df1, aes(x, y, col = "Dataset 1")) +
   geom_line(data = df2, aes(x, y, col = "Dataset 2")) +
   labs(title = "Simulated datasets", col = "")
+plot_save("simulated_datasets.png")
 
 # Parameters used for the first dataset
 data <- df1
@@ -36,27 +42,19 @@ create_table(data = data,
              metric = quadquad)
 
 # We can also plot the models for a given alpha
-plot_models(data = data,
+
+plot_models(data = df1,
             cost_funs = cost_funs,
-            alpha = 50)
+            alpha = 1)
+plot_save("df1_alpha_1.png")
 
-# Parameters used for the second dataset
-data <- df2
-cost_funs <- c(ols, lad, linlin, quadquad)
+plot_models(data = df1,
+            cost_funs = cost_funs,
+            alpha = 2)
+plot_save("df1_alpha_2.png")
 
-# Table where we use the linlin as the evaluation metric
-create_table(data = data, 
-             cost_funs = cost_funs, 
-             alphas = c(1, 2, 5, 10, 50), 
-             metric = linlin)
-
-# Table where we use the quadquad as the evaluation metric
-create_table(data = data, 
-             cost_funs = cost_funs, 
-             alphas = c(1, 2, 5, 10, 50), 
-             metric = quadquad)
-
-# We can also plot the models for a given alpha
-plot_models(data = data,
+plot_models(data = df1,
             cost_funs = cost_funs,
             alpha = 5)
+plot_save("df1_alpha_5.png")
+
