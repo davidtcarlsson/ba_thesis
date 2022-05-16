@@ -1,21 +1,12 @@
-generate_rw <- function(N, x0, mu, variance) {
-  z <- cumsum(rnorm(n = N, mean = 0, sd = sqrt(variance)))
-  t <- 1:N
-  y <- x0 + t * mu + z
-  
+generate_rw <- function(N, step_size) {
+  t <- seq(0, N, by = step_size)
+  y <- c(0, cumsum(rnorm(N / step_size))) * sqrt(step_size)
+
   data.frame(
     x = t,
     y
   )
 }
 
-generate_lin <- function(N, x0, mu, variance) {
-  t <- 1:N
-  y <- x0 + t + rnorm(N, mean = mu, sd = sqrt(variance))
-  
-  data.frame(
-    x = t,
-    y
-  )
-}
+
 
