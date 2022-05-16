@@ -22,14 +22,14 @@ model_eval <- function(preds, metric) {
 
 create_table <- function(data, cost_funs, alphas, metric) {
   output_table <- matrix(nrow = length(cost_funs), ncol = 0)
-  print(paste("Metric used:", metric()$name))
+
   for (a in alphas) {
     preds <- model_preds(data = data, cost_funs = cost_funs , alpha = a)
     eval <- model_eval(preds = preds, metric = metric)
     output_table <- cbind(output_table, eval)
   }
   
-  output_table
+  round(output_table, 2)
 }
 
 plot_save <- function(filename, width = 7.2, height = 4.45) {
