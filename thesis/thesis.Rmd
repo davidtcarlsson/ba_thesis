@@ -89,6 +89,13 @@ Then we cover a couple of sections about the theory and method covered in the st
 
 ## Data
 
+We have generated two different datasets using a Gaussian random walk. We saw this as a reasonable data generating process given that it is often used to model real world data. For example, the Black-Scholes option relies on an assumption that the stock price follows a Gaussian random walk [@black_pricing_1973, p. 641]. The Gaussian random walk can be defined as:
+\begin{align*}
+y_0 &= 0 \\
+y_n &=  \sum_{t = 1}^{n} x_t 
+\end{align*}
+Where $x_t$ are IID Guassian with a mean of zero and a variance of one (N(0, 1)). 
+
 # Results
 
 ## Estimated models with varying degree of asymmetry
