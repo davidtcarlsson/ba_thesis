@@ -1,0 +1,106 @@
+---
+title: "Thesis"
+author: "Erik Ödmann, David Carlsson"
+date: '2022-05-19'
+output: 
+  bookdown::pdf_document2:
+    toc: no
+    toc_depth: 2
+bibliography: references.bib  
+csl: apa.csl
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\newpage
+
+# Abstract
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+# List of abbreviations
+
+| **Abbreviation** | **Explanation**                |
+|------------------|--------------------------------|
+| SL               | Squared loss                   |
+| AL               | Absolute loss                  |
+| QQL              | Quadratic-Quadratic loss       |
+| LLL              | Linear-linear loss             |
+| MSE              | Mean squared error             |
+| MAE              | Mean absolute error            |
+| MQQE             | Mean quadratic-quadratic error |
+| MLLE             | Mean linear-linear error       |
+
+\newpage
+
+# Introduction
+
+What is worse, to overestimate or underestimate a prediction? Based on the prediction problem at hand the answer to this question may not be so clear. When evaluating a prediction do you consider which method was used to estimate the prediction? These are a few of the questions we pose to the reader of this paper. 
+
+As statisticians we often face the problem of having to make predictions, to make a prognosis or forecast. In an attempt to tackle these problems, models are often designed with parameters based on observed data. While estimating your models, choices need to be made to make the predictions accurate as well as useful. So, is an accurate prediction always a useful prediction? This depends on what the situation calls for. What to avoid, what to consider and how to correctly evaluate a model is often misunderstood and thus affects the models estimation process. This misunderstanding can lead to the chosen evaluation metric not matching what the goal of the prediction was. 
+
+Is this problem new or common? Well, it is a universal human concern about what might happen in the future. The issues surrounding predictions and the statistical problems faced is something philosophers, scientists and statisticians have shown interest in for as long as we have existed. As far back as about two millennia ago the philosopher Cicero is famously quoted with:
+
+> “Now I am aware of no people, however refined and learned or however > savage and ignorant, which does not think that signs are given of future events, and that certain persons can recognize those signs and foretell events before they occur.”
+>
+>Cicero, De Divinatione
+
+Which captures the idea of predictions, their intrigue and their problems nicely. An important expression of that concern is the obsession humans have about performing and hearing about forecasts. This has especially been the case for the last 50 years where numerous forecasting competitions have been held since computers have become more available [@hyndman_brief_2020, p, 2]. 
+
+These competitions have focused on measuring the model performances using measurements such as the symmetric mean absolute percentage error (sMAPE) or the mean absolute error which might be the most common of all. However, it is more realistic in many fields such as economics that the actual problem is asymmetric [@granger_prediction_1969, p. 199]. There are numerous examples of when asymmetric loss functions are suitable. 
+
+The object of this study is to demonstrate the suboptimal nature of a prediction when a model uses a symmetrical loss function in estimation and evaluating the same model with an asymmetric loss function. To reach this goal we will assume a prediction situation that is asymmetric. This leads us to pose our main research question: what are the consequences of using symmetrical loss functions and evaluation metrics when the actual cost is asymmetric?
+
+Following this introduction, this thesis will cover the background required to make reasonable conclusions as well as a literary discussion of the applications of asymmetrical loss functions. This will lay a foundation to answer the questions of why asymmetric loss functions exist, real world applications of these functions and to why our research question is relevant and important.
+
+Then we cover a couple of sections about the theory and method covered in the study and that are used to generate the results. Following a discussion of our results the essay will conclude with a summary of our conclusions, the limitations of our study and suggestions of future research. 
+
+
+# Background
+
+## Literature discussion
+
+
+# Theory
+
+## Loss, and error functions	
+
+## Designing loss, and error functions	
+
+## Symmetric loss functions	
+
+### Squared loss (SL)	
+
+### Absolute loss (AL)	
+
+## Asymmetrical loss functions	
+
+### Linear-Linear loss (LLL)	
+
+### Quadratic-Quadratic loss (QQL)
+
+# Method
+
+## Data
+
+# Results
+
+## Estimated models with varying degree of asymmetry
+
+## Mean linear-linear error (MLLE)
+
+## Mean quadratic-quadratic error (MQQE)
+
+# Discussion
+
+# Conclusion
+
+\newpage
+
+# References
