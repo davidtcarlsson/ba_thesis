@@ -5,13 +5,40 @@ date: '2022-05-19'
 output: 
   bookdown::pdf_document2:
     toc: no
-    toc_depth: 2
+    fig_width: 6
+    fig_height: 3
 bibliography: references.bib  
 csl: apa.csl
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(reshape2)
+library(openxlsx)
+source("../R/utilities.R")
+source("../R/generate_data.R")
+source("../R/cost_functions.R")
+source("../R/create_plots.R")
+
+set.seed(12)
+theme_set(theme_classic(base_size = 16))
+
+# Lets create a two datasets
+# - df1: Random walk 
+# - df2: Linear with normal error
+sample_size <- 1000
+step_size <- 1
+df1 <- generate_rw(N = sample_size, step_size = step_size)
+# Add a comment to the dataframe so that I can plot out its name
+comment(df1) <- "1"
+
+df2 <- generate_rw(N = sample_size, step_size = step_size)
+comment(df2) <- "2"
+
+cost_funs <- c(ols, lad, quadquad, linlin)
+alphas <- c(1, 2, 5, 10)
 ```
 
 \newpage
@@ -85,6 +112,8 @@ Then we cover a couple of sections about the theory and method covered in the st
 
 ### Quadratic-Quadratic loss (QQL)
 
+\newpage
+
 # Method
 
 ## Data
@@ -96,15 +125,46 @@ y_n &=  \sum_{t = 1}^{n} x_t
 \end{align*}
 Where $x_t$ are IID Guassian with a mean of zero and a variance of one (N(0, 1)). 
 
+In figure \@ref(fig:simulated-data) ahead we are able to see the two different time series that we have generated (N=1000). 
+
+```{r simulated-data, fig.cap = "Our simulated data sets. Two different time series both generated using a Gausian random walk" , echo=FALSE}
+ggplot() +
+  geom_line(data = df1, aes(x, y, col = "Dataset 1")) +
+  geom_line(data = df2, aes(x, y, col = "Dataset 2")) +
+  labs(title = "Simulated datasets", col = "", x = "t")
+```
+
+\newpage
+
 # Results
 
 ## Estimated models with varying degree of asymmetry
+
+In figure \@ref(fig:df1-a2) we can see how the four different models estimated using different loss functions look on dataset 1 with an alpha of two. This means that positive errors are penalized two times as much as negative errors for the asymmetric models.
+
+```{r df1-a2, fig.cap = "The four different models estimated using different loss functions on data set 1 with and a degree of asymmetry set equal to two (alpha=2)", echo=FALSE}
+ plot_models(data = df1,
+             cost_funs = cost_funs,
+             alpha = 1)
+```
+
+In figure \@ref(fig:df1-a10) we look at the same models, with the same data set but with an alpha of ten. Therefore positive errors are penalized ten times as much as negative ones for the asymmetric models. If we compare it to the previous figure we can see that the asymmetric models are shifted upwards so that most of the errors lie on the negative side. Of course both the symmetric loss functions are not affected by the degree of asymmetry.
+
+```{r df1-a10, fig.cap = "The four different models estimated using different loss functions on data set 1 with and a degree of asymmetry set equal to two (alpha=10)", echo=FALSE}
+ plot_models(data = df1,
+             cost_funs = cost_funs,
+             alpha = 10)
+```
 
 ## Mean linear-linear error (MLLE)
 
 ## Mean quadratic-quadratic error (MQQE)
 
+\newpage
+
 # Discussion
+
+\newpage
 
 # Conclusion
 
