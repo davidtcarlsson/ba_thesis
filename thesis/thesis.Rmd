@@ -7,13 +7,14 @@ output:
     toc: no
     fig_width: 6
     fig_height: 3
+    extra_dependencies: ["float"]
 bibliography: references.bib  
 csl: apa.csl
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
+library(knitr)
+library(kableExtra)
 library(tidyverse)
 library(reshape2)
 library(openxlsx)
@@ -22,8 +23,9 @@ source("../R/generate_data.R")
 source("../R/cost_functions.R")
 source("../R/create_plots.R")
 
+opts_chunk$set(echo = TRUE, fig.pos = "H", out.extra = "")
 set.seed(12)
-theme_set(theme_classic(base_size = 16))
+theme_set(theme_classic(base_size = 10))
 
 # Lets create a two datasets
 # - df1: Random walk 
@@ -88,17 +90,65 @@ Following this introduction, this thesis will cover the background required to m
 
 Then we cover a couple of sections about the theory and method covered in the study and that are used to generate the results. Following a discussion of our results the essay will conclude with a summary of our conclusions, the limitations of our study and suggestions of future research. 
 
-
 # Background
+
+Research on the topics of prediction accuracy, but also loss functions as an estimation technique and method of evaluating models are wide-spread and well-established in the field of statistics and applied within the social sciences as well as the natural sciences. According to Berk, 2011 in his introduction to loss functions, they claim that “all model-based statistical forecasts have loss functions built in.” [@berk_asymmetric_2011, p. 108]. To understand the core of our study it is important to gain an understanding of asymmetric loss, or as @granger_prediction_1969 discusses non-symmetric cost. 
+
+First it is important to establish that statisticians and decision-makers “can usually determine the cost of having made the error and the amount of this cost will usually increase as the magnitude of the error increases.” [@granger_prediction_1969, p. 199]. The cost, or rather the loss associated with an error, or vice versa with for instance profit or gain, is what decision makers and humans most often are concerned with rather than the specific magnitude of the prediction error. This is a part of the philosophical foundation where in economics the discussion of opportunity cost arises or in psychology the concept of risk aversion appears.
+
+Now, in common statistical practice and in classical theory of statistical prediction the least-squares predictor is considered to be a fair, unbiased judge of the magnitude of the error as well as to evaluate the size of the loss. @granger_prediction_1969 continues his argument that in the fields of economics and management an assumption that “the cost of error function is proportional to is not particularly realistic”, meaning that symmetrical loss is unrealistic in many real world applications. The actual function could, in theory at least, be estimated by “standard accounting procedures and in many cases will not be symmetric.” [@granger_prediction_1969]. Granger goes on to analytically prove the problematic consequences of using symmetrical loss functions when the case calls for an asymmetrical solution. 
+
+In the years after @granger_prediction_1969 published, real world applications of asymmetrical solutions to prediction problems have proven to be very useful and provided better performing models. In fact an assumption of symmetry in some applications lacks evidence all together as Granger and Newbold argues “there is surprisingly little evidence for or against such an assumption in data originating either in industry or in many branches of economics”  (Granger och Newbold, 1986, p. 125). 
+
+One of the cases for the use of asymmetric loss functions is when issues arise when the “forecast user may face a different loss function to the decision maker.” (Lawrence och O'Connor, 2005, p. 4). This issue highlights the importance of this field of study as statisticians are often hired to make the prediction on behalf of the decision maker. An aspect of this study's aim is to contribute to the wider understanding of these problems by illustrating the consequences of using symmetrical loss functions when the actual problem is asymmetric.
+
+Another aspect of the choices made in predictions is the choice of evaluation method. There are a lot of examples of studies made to highlight which evaluation metric is the “best”. However one area that did not seem to get as much attention is consideration if the choice evaluation metric is appropriate for the estimation method. The argument to be made is when under- or overestimation is to be considered. Following Granger, 1969 introduction of simple linear asymmetric loss functions he connects the loss function to the idea of under- and overestimation in prediction through the following example of the demand of some commodity. “Assuming that there are no stocks available at the time for which the forecast is made. As over-prediction of demand would lead to over-production and a consequent inventory cost, an under-prediction would lead to insufficient production and so to a loss in sales, and hence profits would arise….In general the cost per unit will be quite different in the two cases of over- and under-production.” (Granger, 1969, p. 201).
+
 
 ## Literature discussion
 
+The following section will discuss the prevalence of asymmetric loss function on real world applications based on studies conducted from an array of scientific fields. This literary discussion will bring context to our study which is important considering our results will be generated using simulated data. Also it will complement the theory section, and together it will be essential to understand the discussion of the results and ultimately our conclusion. The examples of asymmetric loss functions we will draw upon range from solar power effect on the power grid, resource allocation within the criminal justice system and determining price within the car leasing market.
+ 
+First we cite a study by Fatemi and Kuh from 2014 where they discuss “Solar Radiation Forecasting under Asymmetric Cost Functions”. In their case they are faced with the problem that grid operators face when “tasked to balance the electric grid such that generation equals load” (Fatemi och Kuh, 2014, p. 1727). With the introduction of solar energy, and thus intermittent demand to the power-grid issues of underestimation and overestimation of power generation can incur dire costs to power companies as well as to society as a whole.
+
+What this article achieves is to argue fo when it is optimal to add the bias or asymmetry to the forecast, as well as highlight how using an asymmetric loss function, LinLin, can have an asymmetric trade off between underestimation ($0.06/kWh loss of revenue) and overestimation ($10/kWh penalty fee). Which means that an overestimation of power generation can be over 166 times more costly than an underestimation. They argue that “The LinLin loss function is the simplest asymmetric cost function we can use to distinguish between overestimation and underestimation, but per unit cost does not depend on magnitude of error.” (Fatemi och Kuh, 2014, p. 1727) and show that introducing asymmetry in model estimation is the optimal method in their case. To conclude they also demonstrate that “many researchers [that] studied the problem of forecasting solar radiation, they evaluate[d] their methods using symmetric criteria like root mean square error(RMSE) or mean absolute error (MAE).” (Fatemi och Kuh, 2014, p. 1731) which would be suboptimal considering the cost that would be provoked.
+
+Fatemi and Kuh demonstrate a situation that is similar to what Rob Hyndman writes about in his 2006 article “Another look at forecast-accuracy metrics for intermittent demand” - as solar radiation energy is an example of intermittent demand. While Fatemi och Kuh mainly focuses on asymmetric cost function as a method of biasing the forecasting model they conduct a similar discussion as Hyndman. Fatemi and Kuh uses RMSE and MAE as evaluation metrics while Hyndman discusses MASE (mean absolute scaled error) and MAPE (mean absolute percentage error). With these evaluation metrics the focus is however on evaluating accuracy rather than the “usefulness” of over- or underestimating a prediction. Thereby not bringing asymmetry into consideration.’
+
+Another example of an application of asymmetric loss functions in the litterature is Richard Berks study “Asymmetric Loss Functions for Forecasting in Criminal Justice Settings” published in 2011. Berk poses the question: “Is an overestimate of the number of future robberies in a neighborhood as costly as an underestimate?” (Berk, 2011, p. 108) This is due to the fact that the “statistical procedures typically used for forecasting in criminal justice settings rest on symmetric loss functions.” (Berk, 2011, p. 107) The answer that is returned is “if the number of robberies in an area is overestimated, the area will be observed. In the opposite case, it will receive insufficient surveillance, which could lead to a fatal increase in crime”.
+
+Berk concludes that “when the costs of forecasting errors are asymmetric and an asymmetric loss function is properly deployed, forecasts will more accurately inform the criminal justice activities than had a symmetric loss function been used instead.” (Berk, 2011, p. 108) Berks study clearly demonstrates how an application or even misapplication of asymmetric and symmetric loss functions can have a significant effect on society as the loss incurred by a prediction doesn’t only have an economic cost associated with it.
+
+The third and final example of an application of asymmetric cost functions is given by Dress et al., 2018 where they examine the car leasing pricing market. In the leasing business just as in previous examples the forecast errors entail different costs, therefore one of the objectives of the study is “demonstrating that forecasting with asymmetric cost of error functions enhances the quality of decision support in car leasing.” (Dress m. fl., 2018, p. 2) Dress et al. finds for example that under the assumption that “the costs of overestimating resale prices is twice that of the opposite error, incorporating corresponding cost asymmetry into forecast model development reduces decision costs by about eight percent, compared to a standard forecasting model.” (Dress m. fl., 2018, p. 2)
+
+Another conclusion that Dress et al. finds is that the decision maker should consider asymmetric cost functions as “this helps to reduce the costs of suboptimal pricing decisions and increase efficiency in the leasing business” (Dress m. fl., 2018, p. 27). Dress et al. echoes with the car leasing market what other researchers have stated within other fields that there is a continued focus on forecast accuracy in previous studies, rather than considering the costs associated with overestimation or underestimation. Also, as with Fatemi and Kuh, Dress et al. argues for an ex ante approach to when asymmetry should be considered, meaning that “an earlier consideration of application characteristics might increase the (business) value of the forecasting method.” (Dress m. fl., 2018, p. 11). 
 
 # Theory
 
+The following section will introduce and explain the essential theory used in our method. A basic statistical understanding of how linear models are estimated as well as evaluated is assumed. The core purpose of this section is to define the terms used throughout the study as well as explain the four different loss functions used throughout the study.
+
 ## Loss, and error functions	
 
+The most simple regression model is a model where a single explanatory variable and the response variable is assumed to be linear [@wasserman_all_nodate].
+ 
+$$ f(x) = intercept + slope * x $$
+
+However there are an unlimited number of ways to adjust the regression line by adjusting the intercept and slope. The way we choose which solution is most optimal is therefore an important task. This is where the loss function comes into the picture. This thesis will refer to the loss function as a function which applies a penalty to a specific prediction error or for the model as a whole. Therefore one way to decide which intercept and slope that the regression line should have is by picking the solution which minimizes the loss function for the model. It is first after the model estimation where we will look at error measures or error functions as a way to compare how different models perform.
+
+@dress_residual_2018 explains that “error measures are a common way to evaluate forecast performance in a quantitative manner. They are designed on the basis of loss (or cost) functions, which penalize deviations between forecasts and actuals.” [@dress_residual_2018, p. 7] For this thesis the error functions will be exactly the same as the loss functions with the only distinction that the loss function is used for the actual estimation of the model. The process behind the choice of error function in evaluation, depending on the chosen loss function in estimation, is central to the answer of our research question.  
+
 ## Designing loss, and error functions	
+
+One of the decisions to take into account when designing a cost function is whether or not it should be symmetric or not. If the cost function is symmetric then the loss of a negative error is the same as a positive one. If it is asymmetric then a negative error has a higher loss than positive one or vice versa (Henning och Kutlukaya, p. 24).
+
+There are a number of different loss functions that you can use. In this study we will look at the following ones:
+
+- Squared loss
+- Absolute loss
+- Quadratic-Quadratic loss
+- Linear-Linear loss
+
+These are by no means an exhaustive list but rather common loss functions that we consider are sufficient to answer our research question. This study will therefore consider two symmetric loss functions and two asymmetric loss functions. When this study considers an asymmetric case where the degree of asymmetry is equal to one the asymmetric case and the symmetric case will yield the same results. This lies behind our decision to use these four cost functions. Squared loss and quadratic-quadratic as well as absolute loss and linear-linear loss are the same when the degree of asymmetry is equal to one.
 
 ## Symmetric loss functions	
 
@@ -115,6 +165,19 @@ Then we cover a couple of sections about the theory and method covered in the st
 \newpage
 
 # Method
+
+For this thesis we will use simulated datasets in order to highlight the consequences of using symmetrical estimation methods for asymmetrical problems. We have chosen to do this, instead of using real world data, to make our results reproducible and thus our conclusions more generalisable. For the simulation we have used the programming language R. The simulation will work in the following way
+
+- Generate two datasets. 
+- Estimate four different models using two symmetric and two asymmetric loss functions. 
+- All the models will then be evaluated using the two asymmetric error functions. 
+- We will then look at how the estimated models are affected by the degree of asymmetry.
+
+The asymmetrical models that we have chosen are not necessarily differentiable which means that we cannot estimate it using maximum likelihood estimation. Therefore we have chosen to use the Nelder-Mead simplex algorithm which is different from maximum likelihood estimation since it is not based on first or second order derivatives to find the minimum [@nelder_simplex_1965, p. 311]. Using this algorithm we are able to estimate the intercept and slope for each of the given loss functions, both symmetric and asymmetric, that will be used throughout this report.
+
+After the models have been estimated we will evaluate the models using MLLE and MQQE. The evaluation will be regarding the in-sample error meaning that the models are evaluated on the same data used for estimation. Another thing to note is that when we evaluate the models at for example an alpha of 10, then the asymmetric models will also be estimated with that same alpha. Same goes for all different alphas that we will show in our tables and figures. We will also create figures to compare the results of how the estimated models are affected by an increasing degree of asymmetry. 
+
+The data points of the two simulated datasets will differ, as is expected with the inherent randomness when using a Gaussian random walk. In the analysis for our results, we work under the assumption of asymmetry and have decided to “punish” positive errors more than negative errors in the estimation of our models. Therefore when we use an alpha of for example 2, this means that positive errors are penalized twice as high as negative errors.
 
 ## Data
 
@@ -156,7 +219,44 @@ In figure \@ref(fig:df1-a10) we look at the same models, with the same data set 
              alpha = 10)
 ```
 
+In figures \@ref(fig:df2-a2) and \@ref(fig:df2-a10) we will conduct the same process for data set 2 as we did for data set 1. Figure \@ref(fig:df2-a2) shows the four different models estimated using different loss functions on data set 2 with an alpha of two. Just as with data set 1, this means that positive errors are penalized twice as much as negative errors for the asymmetric models.
+
+```{r df2-a2, fig.cap = "The four different models estimated using different loss functions on data set 2 with and a degree of asymmetry set equal to two (alpha=2)", echo=FALSE}
+ plot_models(data = df2,
+             cost_funs = cost_funs,
+             alpha = 2)
+```
+
+Lastly in figure \@ref(fig:df2-a10) we look at the same models applied on dataset 2 but with an alpha of ten. Like before we can see that the asymmetric models are shifted upwards so that most of the errors lie on the negative side while the symmetric models are unchanged by the degree of asymmetry.
+
+```{r df2-a10, fig.cap = "The four different models estimated using different loss functions on data set 2 with and a degree of asymmetry set equal to two (alpha=10)", echo=FALSE}
+ plot_models(data = df2,
+             cost_funs = cost_funs,
+             alpha = 10)
+```
+
+Now we have demonstrated how the models have been estimated and how they can be affected by the assumption of asymmetry. In the next section we continue with the evaluation of our different models. As stated in the method section, these models will now be evaluated using the two different asymmetric loss functions.
+
 ## Mean linear-linear error (MLLE)
+
+Firstly we will evaluate both data sets using the MLLE function. In table \@ref(tab:df1-eval-mlle) we have looked at how the MLLE changes when the degree of asymmetry (alpha) increases for dataset 1.
+
+```{r df1-eval-mlle, echo=FALSE}
+tab <- create_table(data = df1, 
+             cost_funs = cost_funs, 
+             alphas = alphas, 
+             metric = linlin)
+kable(tab, booktabs = T, caption = "A comparison of the different loss functions evaluated using MLLE with increasing degrees of asymmetry (a) on dataset 1. Best performing model highlighted in bold text.
+") %>%
+  kable_styling(latex_options = "striped") %>%
+  row_spec(4, bold = TRUE)
+```
+
+As the degree of asymmetry (a) increases the error of the symmetric loss functions (SL and AL) increases at a higher rate than compared to the asymmetric loss functions. For this dataset we can see that the two models estimated using asymmetric loss functions perform better than the symmetrical models. We also notice that the symmetric models perform worse compared to the asymmetric models as alpha increases. In table \@ref(tab:df1-eval-mlle) we can see that with an alpha of 10 the model estimated using the LLL function has about 3 times lower MLLE than the model estimated using SL. In figure \@ref(fig:df1-loss-alphas) we give a graphical representation of table \@ref(tab:df1-eval-mlle).
+
+```{r df1-loss-alphas, fig.cap = "A graphical representation of table x. Here we can see the linear relationship between the degree of asymmetry and MLLE for the different loss functions on data set 1", echo=FALSE}
+plot_loss_alpha(df1, cost_funs = cost_funs, c(1, tail(alphas, 1)), linlin)
+```
 
 ## Mean quadratic-quadratic error (MQQE)
 
@@ -164,9 +264,32 @@ In figure \@ref(fig:df1-a10) we look at the same models, with the same data set 
 
 # Discussion
 
+Before we discuss the result section we would like to adress why the models estimated using LLL and evaluated using MQQE in figure XX and XX appear to not be as smooth as the others. We believe that this stems from the fact that each model is estimated numerically which therefore means that it is only an approximation of the true loss minimizing model. Therefore we believe that it is the inherent approximation error that is the underlying cause. However we do not believe that this will affect our results as we are still able to spot the underlying direction and shape of the MQQE for when we increase alpha.
+
+Regarding the results we find that the most important discoveries made from our results are as follows
+
+1. For both datasets, given that the problem is asymmetric meaning that we evaluate with an asymmetric error function. The models that take the asymmetry into account have the lowest prediction errors and are therefore suited best given the problem.
+2. The best performing model for both datasets is the model where we pair the loss function with an equivalent error function. For example if we evaluate using MQQE then the best performing model will be the one that uses QQL as a loss function. In other words, if possible it would be preferable to optimize your model based on the goal at hand given a specific error function.
+3. As the degree of asymmetry increases the difference in performance between the asymmetric models and the symmetric models increases. Therefore if the problem is asymmetric to a larger degree, choosing a symmetric loss function will produce a sub-optimal model in comparison with choosing a asymmetric model that takes the degree of asymmetry into account.
+
+Together these results provide explanations to the strength of the asymmetric loss functions over the symmetric loss function while simultaneously emphasizing the weakness of the symmetric loss functions. These results are also similar to other results that can be found in the literature. For example Dress et al. in the application on the car leasing market finds “using the QQC function (QQL in the present study) as performance criterion and proxy for decision costs, we observe asymmetric forecasting methods to consistently and substantially improve upon symmetric alternatives.” (Dress m. fl., 2018, p. 26) This result is coherent with our result 2. While our result 1 is coherent with “the empirical results observed in several comparisons provide strong evidence that ignoring asymmetric error costs harms decision quality” (Dress m. fl., 2018, p. 26) In line with our result 3 we find an example of the degree to which an asymmetric approach can reduce error costs compared to a symmetric solution is also observed by Dress et al. when they observe “cost reductions of above 40 percent over a challenging benchmark model.” (Dress m. fl., 2018, p. 26). 
+
+The results found in this study are what we would expect considering the theory behind the loss functions. Using the same type of loss function in estimation as well as evaluation consistently gives us the best performing model for both datasets.
+
 \newpage
 
 # Conclusion
+
+“Not all forecasting errors have the same consequences. For decision makers who will be using forecasts, these different consequences can have real bite. It stands to reason, therefore, that forecasts that will be used should be shaped sensibly and sensitively by the costs of forecasting errors. A key instance is when the costs are asymmetric.” (Berk, 2011, p. 121) This quote fairly summarizes the foundation that our study is based on. Despite what Granger theorized in 1969 about the preferable utility of asymmetric cost, scientists and forecasters still to this day use suboptimal loss functions when estimating and evaluating models, with a focus on accuracy rather than utility. To this end this study’s aim is simply to demonstrate the suboptimal nature of a prediction when a model uses a symmetrical loss function in estimation and evaluating the model with an asymmetric loss function.
+The outcome of this study gives comprehensive enough results to be able to answer the core research question; what are the consequences of using symmetrical loss functions and evaluation metrics when the actual cost is asymmetric? The three main results can be summarized as showing the strength of choosing the optimal type of asymmetric loss function as well as highlighting the potential error when choosing a symmetric loss function. What our results imply is that working under asymmetric loss provides more useful predictions than symmetrical loss functions. More useful predictions in turn have the potential to improve decision quality.
+
+There are however several limitations of this study that need to be considered. Firstly, because of the time and resource constraints, the study has only looked at simulated data. This may limit how applicable these results are on real world data. However, through our section on literature discussion our aim was to counteract this weakness by providing evidence of a wide range of real world applications of asymmetric loss functions. Also the simulated data is a time series, specifically a Gaussian random walk, which was chosen for its ties to real world data making it more generalisable. Now with the data at hand our analysis has only made a ‘in-sample’ prediction which is a weaker forecast than an out-of-sample prediction since it is more sensitive to outliers or datamining. Finally, this study only examines four simple loss functions. For use on real world problems, where more complicated models are used, the choice and design of loss functions become more complex. However, according to the evidence provided by previous studies, the core idea that the world offers asymmetric problems, the choice of a symmetrical evaluation metric, would create larger errors and costs than an asymmetrical tool.
+
+This study echoes the conclusions found by previous research by adding a simple comparison between the different types of loss functions. One of the achievements of this study is that through simulated data, partly prove what Granger displayed analytically. Despite the limitations of the study the conclusions of this study should be useful in several applications. In future research it would be interesting to apply the methods demonstrated in this study on real world data. With more time and resources more research can be made on the sensitivity of different loss functions affecting predictions as well as the actual cost associated with the prediction errors. 
+
+Hopefully we have been able to shed a light on a topic that often gets overlooked in the literature and that this study broadens the understanding of the reader when they make predictions in the future. 
+
+
 
 \newpage
 
