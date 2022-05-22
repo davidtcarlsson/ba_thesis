@@ -152,15 +152,39 @@ These are by no means an exhaustive list but rather common loss functions that w
 
 ## Symmetric loss functions	
 
+
 ### Squared loss (SL)	
+
+```{r sl, echo=FALSE, fig.cap="Add fig caption", fig.width=5}
+plot_a_loss(c(-5, 5), ols, c(2, 5, 10)) + labs(title = "Squared loss function")
+```
 
 ### Absolute loss (AL)	
 
+```{r al, echo=FALSE, fig.cap="Add fig caption", fig.width=5}
+plot_a_loss(c(-5, 5), lad, c(2, 5, 10)) + labs(title = "Absolute loss function")
+```
+
 ## Asymmetrical loss functions	
+
+
 
 ### Linear-Linear loss (LLL)	
 
+```{r lll, echo=FALSE, fig.cap="Add fig caption"}
+plot_a_loss(c(-5, 5), linlin, c(2, 5, 10)) + labs(title = "Linear-Linear loss function")
+```
+
 ### Quadratic-Quadratic loss (QQL)
+
+```{r qql, echo=FALSE, fig.cap="Add fig caption"}
+plot_a_loss(c(-5, 5), quadquad, c(2, 5, 10)) + labs(title = "Quadratic-Quadratic loss function")
+```
+
+
+```{r diff-loss-funs, echo=FALSE, fig.cap="Add fig caption"}
+plot_loss_funs(xlim = c(-5, 5), alpha = 2) + labs(title = "Comparison of the different loss functions for alpha = 2")
+```
 
 \newpage
 
@@ -230,9 +254,11 @@ In figures \@ref(fig:df2-a2) and \@ref(fig:df2-a10) we will conduct the same pro
 Lastly in figure \@ref(fig:df2-a10) we look at the same models applied on dataset 2 but with an alpha of ten. Like before we can see that the asymmetric models are shifted upwards so that most of the errors lie on the negative side while the symmetric models are unchanged by the degree of asymmetry.
 
 ```{r df2-a10, fig.cap = "The four different models estimated using different loss functions on data set 2 with and a degree of asymmetry set equal to two (alpha=10)", echo=FALSE}
- plot_models(data = df2,
-             cost_funs = cost_funs,
-             alpha = 10)
+p <- plot_models(data = df2,
+                 cost_funs = cost_funs,
+                 alpha = 10) 
+p
+
 ```
 
 Now we have demonstrated how the models have been estimated and how they can be affected by the assumption of asymmetry. In the next section we continue with the evaluation of our different models. As stated in the method section, these models will now be evaluated using the two different asymmetric loss functions.
@@ -254,11 +280,64 @@ kable(tab, booktabs = T, caption = "A comparison of the different loss functions
 
 As the degree of asymmetry (a) increases the error of the symmetric loss functions (SL and AL) increases at a higher rate than compared to the asymmetric loss functions. For this dataset we can see that the two models estimated using asymmetric loss functions perform better than the symmetrical models. We also notice that the symmetric models perform worse compared to the asymmetric models as alpha increases. In table \@ref(tab:df1-eval-mlle) we can see that with an alpha of 10 the model estimated using the LLL function has about 3 times lower MLLE than the model estimated using SL. In figure \@ref(fig:df1-loss-alphas) we give a graphical representation of table \@ref(tab:df1-eval-mlle).
 
-```{r df1-loss-alphas, fig.cap = "A graphical representation of table x. Here we can see the linear relationship between the degree of asymmetry and MLLE for the different loss functions on data set 1", echo=FALSE}
-plot_loss_alpha(df1, cost_funs = cost_funs, c(1, tail(alphas, 1)), linlin)
+```{r df1-mlle-alphas, fig.cap = "A graphical representation of table x. Here we can see the linear relationship between the degree of asymmetry and MLLE for the different loss functions on data set 1", echo=FALSE}
+plot_loss_alpha(df1, cost_funs = cost_funs, c(1, tail(alphas, 1)), linlin) +
+  labs(title = "Dataset 1, Mean Linear-Linear error vs alpha", y = "MLLE")
+```
+
+
+
+```{r df2-eval-mlle, echo=FALSE}
+tab <- create_table(data = df2, 
+             cost_funs = cost_funs, 
+             alphas = alphas, 
+             metric = linlin)
+kable(tab, booktabs = T, caption = "A comparison of the different loss functions evaluated using MLLE with increasing degrees of asymmetry (a) on dataset 2. Best performing model highlighted in bold text.
+") %>%
+  kable_styling(latex_options = "striped") %>%
+  row_spec(4, bold = TRUE)
+```
+
+
+```{r df2-mlle-alphas, fig.cap = "A graphical representation of table x. Here we can see the linear relationship between the degree of asymmetry and MLLE for the different loss functions on data set 2", echo=FALSE}
+plot_loss_alpha(df2, cost_funs = cost_funs, c(1, tail(alphas, 1)), linlin) +
+  labs(title = "Dataset 2, Mean Linear-Linear error vs alpha", y = "MLLE")
 ```
 
 ## Mean quadratic-quadratic error (MQQE)
+
+```{r df1-eval-mqqe, echo=FALSE}
+tab <- create_table(data = df1, 
+             cost_funs = cost_funs, 
+             alphas = alphas, 
+             metric = quadquad)
+kable(tab, booktabs = T, caption = "A comparison of the different loss functions evaluated using MQQE with increasing degrees of asymmetry (a) on dataset 1. Best performing model highlighted in bold text.
+") %>%
+  kable_styling(latex_options = "striped") %>%
+  row_spec(3, bold = TRUE)
+```
+
+
+```{r df1-mqqe-alphas, fig.cap = "A graphical representation of table x. Here we can see the linear relationship between the degree of asymmetry and MQQE for the different loss functions on data set 1", echo=FALSE}
+plot_loss_alpha(df1, cost_funs = cost_funs, c(1, tail(alphas, 1)), quadquad) +
+  labs(title = "Dataset 1, Mean Quadratic-Quadratic error vs alpha", y = "MQQE")
+```
+
+```{r df2-eval-mqqe, echo=FALSE}
+tab <- create_table(data = df2, 
+             cost_funs = cost_funs, 
+             alphas = alphas, 
+             metric = quadquad)
+kable(tab, booktabs = T, caption = "A comparison of the different loss functions evaluated using MQQE with increasing degrees of asymmetry (a) on dataset 2. Best performing model highlighted in bold text.
+") %>%
+  kable_styling(latex_options = "striped") %>%
+  row_spec(3, bold = TRUE)
+```
+
+```{r df2-mqqe-alphas, fig.cap = "A graphical representation of table x. Here we can see the linear relationship between the degree of asymmetry and MQQE for the different loss functions on data set 2", echo=FALSE}
+plot_loss_alpha(df2, cost_funs = cost_funs, c(1, tail(alphas, 1)), quadquad) +
+  labs(title = "Dataset 2, Mean Quadratic-Quadratic error vs alpha", y = "MQQE")
+```
 
 \newpage
 
